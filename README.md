@@ -6,3 +6,8 @@ We investigate the intrinsic dimension across the many-body localization transit
 See IDMBL.ipynb for code along (this can be run on a laptop)
 
 For best experience; clone repo.
+
+<img src="EigCDom-L10-seeds20-ws11.png"
+     alt="EigenComponent Dominance"
+     style="float: left; margin-right: 10px;" />
+
