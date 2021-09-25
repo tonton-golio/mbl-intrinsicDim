@@ -1,4 +1,4 @@
-from nn2_cluster import *
+from utils_cluster import *
 import argparse
 import os
 from numpy import save, load, array
