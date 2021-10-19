@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from math import factorial
 from tqdm import tqdm
-import fssa
+#import fssa
 from scipy.stats import chisquare
     
 ## Building the Hamiltonian 
@@ -106,7 +106,7 @@ def energyDiagonal(bitString='010', V=[0,0.5,1] , U=1.0):
 					E += U
 	return E
 
-def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42):
+def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42, periodic_boundary_conditon=True):
 	'''
 	Constructs the Hamiltonian matrix
 	________________
@@ -134,9 +134,12 @@ def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42):
 					new_state = key[:site] + '0' + '1' + key[site+2:]
 					H[s2i[new_state], s2i[key]], H[s2i[key], s2i[new_state]] = t ,t
 			except IndexError: # periodic boundary conditions
-				if (key[site] == '1' and key[0]== '0'):
-					new_state = '1' + key[1:site] + '0'
-					H[s2i[new_state], s2i[key]], H[s2i[key], s2i[new_state]] = t ,t
+				if periodic_boundary_conditon == True:
+					if (key[site] == '1' and key[0]== '0'):
+						new_state = '1' + key[1:site] + '0'
+						H[s2i[new_state], s2i[key]], H[s2i[key], s2i[new_state]] = t ,t
+				else:
+					pass
 	return H
 
 def buildDiagSave(L = 10, num_seeds = 10, ws = [1,2,3], location = 'data/raw/'):
