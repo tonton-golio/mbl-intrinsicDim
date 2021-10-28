@@ -193,11 +193,11 @@ def eigenC_plots(below_lims, maxs, ws,
     mean_below = np.mean(below_lims,axis=2).T[::-1]
     fig, ax  = plt.subplots(2,1, sharex=True, 
                            gridspec_kw={'height_ratios':[2,1]},
-                           figsize=(10,6))
+                           figsize=(8,5))
     
     for i, color in zip(range(len(mean_below)), colors):
         ax[0].fill_between(ws, mean_below[i], mean_below[i+1],
-                         label=lims[::-1][i],
+                         label="{:.0e}".format(lims[::-1][i]),
                          color=color, alpha=.3)
     
     # Plot 2: Maxs
@@ -206,7 +206,7 @@ def eigenC_plots(below_lims, maxs, ws,
         ax[1].scatter([ws[index]], 1-np.mean(i), c='r', alpha=0.9)
 
     # Labels and such
-    ax[0].legend(bbox_to_anchor=(1, 1.), fontsize=12)
+    ax[0].legend(bbox_to_anchor=(.25, .65), fontsize=11)
     ax[0].set_ylabel('Proportion of $|\lambda_c|<\zeta$ ', fontsize=14)
     ax[1].legend(["point", "mean"],#bbox_to_anchor=(0.2, .25),
     	facecolor='white', framealpha=1,
