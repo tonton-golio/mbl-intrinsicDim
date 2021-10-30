@@ -148,10 +148,14 @@ def buildDiagSave(L = 10, num_seeds = 10, ws = [1,2,3], location = 'data/raw/'):
     '''
     for W in tqdm(ws):
         for seed in range(num_seeds):
-            H = constructHamiltonian(L = L, W = W, seed=seed)
-            _, eigvecs = np.linalg.eigh(H)
             filename = location+'eigvecs-L-{}-W-{}-seed-{}.npy'.format(L, round(W,2), seed)
-            np.save(filename, eigvecs)
+            try:
+                np.load(filename)
+                print(filename,'exists')
+            except:
+                H = constructHamiltonian(L = L, W = W, seed=seed)
+                _, eigvecs = np.linalg.eigh(H)
+                np.save(filename, eigvecs)
     return 'success'
 
 
@@ -194,29 +198,37 @@ def eigenC_plots(below_lims, maxs, ws,
     fig, ax  = plt.subplots(2,1, sharex=True, 
                            gridspec_kw={'height_ratios':[2,1]},
                            figsize=(8,5))
-    
+    #print(len(mean_below))
     for i, color in zip(range(len(mean_below)), colors):
-        ax[0].fill_between(ws, mean_below[i], mean_below[i+1],
+        #print(i)
+        try:
+            ax[0].fill_between(ws, mean_below[i], mean_below[i+1],
                          label="{:.0e}".format(lims[::-1][i]),
                          color=color, alpha=.3)
+        except IndexError:
+            ax[0].fill_between(ws, 0, mean_below[i],
+                         label="{:.0e}".format(lims[::-1][i]),
+                         color=color, alpha=.3)
+		
     
     # Plot 2: Maxs
     for index, i in enumerate(maxs):
         ax[1].scatter([ws[index]]*num_seeds, 1-i, c='b', alpha=2/num_seeds)
         ax[1].scatter([ws[index]], 1-np.mean(i), c='r', alpha=0.9)
 
+    ax[1].grid()
     # Labels and such
-    ax[0].legend(bbox_to_anchor=(.25, .65), fontsize=11)
-    ax[0].set_ylabel('Proportion of $|\lambda_c|<\zeta$ ', fontsize=14)
+    ax[0].legend(bbox_to_anchor=(.23, .75), fontsize=11)
+    ax[0].set_ylabel('Proportion of $|\kappa|<\zeta$ ', fontsize=14)
     ax[1].legend(["point", "mean"],#bbox_to_anchor=(0.2, .25),
     	facecolor='white', framealpha=1,
-        fontsize=14)
+        fontsize=12)
     plt.xlabel('Disorder strength, $W$', fontsize=14)
-    ax[1].set_ylabel('$1-max(|\lambda_c|)$', fontsize=14)    
+    ax[1].set_ylabel('$1-max(|\kappa|)$', fontsize=14)    
     plt.suptitle('Eigencomponent, $\kappa$, dominance', fontsize=17)
 
 # 2NN
-def nn2(A, plot=False):
+def nn2(A, plot=False, eps=0):
 	'''
     Find intrinsic dimension (ID) via 2-nearest-neighbours
 
@@ -239,7 +251,7 @@ def nn2(A, plot=False):
     
     # Calculate mu
 	argsorted = np.sort(dist_M, axis=1)
-	mu =  argsorted[:,1]/argsorted[:,0]
+	mu =  argsorted[:,1]/(argsorted[:,0]+eps)
 	x = np.log(mu)
     
     # Permutation
@@ -259,9 +271,10 @@ def nn2(A, plot=False):
 	if plot==True:
 		plt.scatter(x,y, c='purple', alpha=0.5)
 		plt.plot(x,x*d, c='orange', ls='-')
-		plt.title('2NN output for single realization', fontsize=0)
-		plt.xlabel('$\log(\mu)$', fontsize=14)
-		plt.ylabel('$1 - F(\mu)$', fontsize=14)
+		plt.title('2NN output for single realization', fontsize=16)
+		plt.xlabel('$\ln(\mu)$', fontsize=14)
+		plt.ylabel('$-\ln(1 - F(\mu))$', fontsize=14)
+		plt.text(np.mean(x)*.75, 4.2, s='$D_{int}$'+'={}'.format(round(d,1)))
 		plt.grid()
         #plt.savefig('figures/2nnSingle_L{}'.format(10),dpi=400,bbox_inches='tight')
     
