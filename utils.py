@@ -106,7 +106,7 @@ def energyDiagonal(bitString='010', V=[0,0.5,1] , U=1.0):
 					E += U
 	return E
 
-def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42, periodic_boundary_conditon=True):
+def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42, periodic_boundary_conditon=True, return_potential=False):
 	'''
 	Constructs the Hamiltonian matrix
 	________________
@@ -140,6 +140,8 @@ def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42, periodic_bound
 						H[s2i[new_state], s2i[key]], H[s2i[key], s2i[new_state]] = t ,t
 				else:
 					pass
+	if return_potential == True:
+		return H, V
 	return H
 
 def buildDiagSave(L = 10, num_seeds = 10, ws = [1,2,3], location = 'data/raw/'):
@@ -228,7 +230,7 @@ def eigenC_plots(below_lims, maxs, ws,
     plt.suptitle('Eigencomponent, $\kappa$, dominance', fontsize=17)
 
 # 2NN
-def nn2(A, plot=False, eps=0):
+def nn2(A, plot=False, eps=0, return_R1=False):
 	'''
     Find intrinsic dimension (ID) via 2-nearest-neighbours
 
@@ -244,6 +246,7 @@ def nn2(A, plot=False, eps=0):
         quality: chiSquared fit-quality
     
     '''
+	
 	N  = len(A)
     #Make distance matrix
 	dist_M = np.array([[sum(abs(a-b)) if index0 < index1 else 0 for index1, b in enumerate(A)] for index0, a in enumerate(A)])
@@ -252,6 +255,7 @@ def nn2(A, plot=False, eps=0):
     # Calculate mu
 	argsorted = np.sort(dist_M, axis=1)
 	mu =  argsorted[:,1]/(argsorted[:,0]+eps)
+	R1 = argsorted[:,0]
 	x = np.log(mu)
     
     # Permutation
@@ -278,6 +282,9 @@ def nn2(A, plot=False, eps=0):
 		plt.grid()
         #plt.savefig('figures/2nnSingle_L{}'.format(10),dpi=400,bbox_inches='tight')
     
+	if return_R1==True:
+		return d, chi2, R1
+
 	return d, chi2
 
 def nn2_loop(ws, num_seeds, Ls, location='data/raw/'):
