@@ -1,6 +1,6 @@
 _*''How disordered does a potential have be for the system to retain local memory.''* -P. W. Anderson 1958_
 
-We propose **dimension analysis via 2NN** (a neighbour graphs algorithm) can help to answer this question. To show our method we present and interactive tool for analysis of **Hubbard Hamiltonian eigenstates**.
+We propose **dimension analysis via 2NN** (a neighbour graphs algorithm) can help to answer this question. To show our method we present and interactive tool for analysizing **eigenstates of the 1D Hubbard Hamiltonian**.
 
 $$\mathcal{H} = t\sum_i^{L-1}(\hat{c}_{i+1}^\dagger \hat{c}_i +h.c.) 
             + U\sum_{i}^{L-1} \hat{n}_i\hat{n}_{i+1}
@@ -8,7 +8,7 @@ $$\mathcal{H} = t\sum_i^{L-1}(\hat{c}_{i+1}^\dagger \hat{c}_i +h.c.)
 
 Ajuste parameters via sliders!
 
-Each site is associated with an energy. This ernergy is drawn from uniform random distribution in the range [-W,W]
+Each site is associated with an energy. This energy is drawn from uniform random distribution in the range [-W,W]
 
 Do note, that the x-axis postion for the potential is not the same as that for the eigvecs. For the potential, it is the site number, whereas for the eigenstates it is the configuration index. The configurations are indexed as follows
 

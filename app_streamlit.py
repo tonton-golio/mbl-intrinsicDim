@@ -40,7 +40,7 @@ if make_potential == True:
     st.pyplot(fig)
     st.write(text[4])
     st.code('''np.random.seed(seed)
-    V = np.random.uniform(-1,1,size=L) * W''')
+    h = np.random.uniform(-1,1,size=L) * W''')
     
 
 if make_hamiltonian == True:
