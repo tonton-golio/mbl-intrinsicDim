@@ -1,98 +1,70 @@
 import streamlit as st
 import numpy as np
-import time
 import matplotlib.pyplot as plt
 from utils import*
 import pandas as pd
 import seaborn as sns
 
-# st.background('white')
-# Intro text
+with open('data/app_text.txt') as f:
+    text = f.read().split('\n\n')
+
 st.title('MBL intrinsic dimension')
-st.write('Here is an interactive experience with perform dimension analysis of Hubbard Hamiltonian eigenstates.')
-
-st.write('We wanna contribute to answering the question originally posed by P. W. Anderson in 1958: How disordered does a potential have be for the system to retain local memory.')
-
-
-# Lets keep a table of results here at the top
-'''WHY DOES IT RESET WHEN I CHANGE THE SLIDERS IN THE SIDEBARR!!'''
-data = []
-df = pd.DataFrame(data, columns='L, W, ID'.split(', '))
-table = st.table(df)
-
-
-st.write('Yo yo, the hamiltonian looks like this:')
-'''$$\mathcal{H} = t\sum_i^{L-1}(\hat{c}_{i+1}^\dagger \hat{c}_i +h.c.) 
-            + U\sum_{i}^{L-1} \hat{n}_i\hat{n}_{i+1}
-            + \sum_{i}^L h_i\hat{n}_i.$$'''
-st.write('Btw, this is the Hubbard Hamiltonian in the second quantization formalism. The parameters can be ajusted via the sliders in the sidebar!')
+intro_text = [st.write(text[i]) for i in range(3)]
 
 # Sidebar
-L = st.sidebar.slider('System size, L',2,10,6,2)
+_ = st.sidebar.header(text[3])
+L = st.sidebar.slider('System size, L',2,14,10,2)
 W = st.sidebar.slider('Disorder strength, W',0.1,10.,3.65,.1)
 U = st.sidebar.slider('Interaction strength, U',0.,2.,1.,.1)
 t = st.sidebar.slider('Hopping strenght, t',0.,2.,1.,.1)
+seed = st.sidebar.slider('seed',0,100,0,1)
 
-import_data = st.button('Import data (lots of data)!')
+st.header('Functions')
+col1, col2, col3, col4 = st.columns(4)
+make_potential = col1.button('Potential')
+make_hamiltonian = col2.button('Leading eigenstates')
+make_2nn = col3.button('2 nearest neighbours')
+make_r1 = col4.button('Nearest neighbour distribution')
 
+fig = plt.figure(figsize=(12,3))
 
-bot1 = st.button('run')
-    #label='Make hamiltonian and show potential (also diag)') # starts False, toggle for True
-if bot1 == True:
-    H, V = constructHamiltonian(L = L, W = W, U = U, t = t, seed=42, return_potential=True)
-    fig = plt.figure(figsize=(10,3))
-    _, vecs = np.linalg.eigh(H)
+if make_potential == True:
+    np.random.seed(seed)
+    V = np.random.uniform(-1,1,size=L) * W
     plt.title('Potential')
-    plt.plot(np.arange(1,len(V)+1), V)
+    plt.plot(np.arange(len(V)), V)
+    plt.scatter(np.arange(len(V)), V, c='r')
     plt.ylim(-W,W)
     st.pyplot(fig)
-    st.write('\nNow that we have the potential, lets have a look at the intrinsic dimension')
-    fig2 = plt.figure(figsize=(10,3))
+    st.write(text[4])
+    
+
+if make_hamiltonian == True:
+    H = constructHamiltonian(L = L, W = W, U = U, t = t, seed=seed)
+    _, vecs = np.linalg.eigh(H)
+    plt.plot(np.arange(len(vecs)), vecs[:,:3])
+    st.pyplot(fig)
+
+    col1_inner, col2_inner = st.columns(2)
+    _ = col1_inner.write(text[5])
+    data_index_illu = ['000111', '001011', '001101', '001110']
+    df_index_illu = pd.DataFrame(data_index_illu, columns=['Configuration'])
+
+    _ = col2_inner.table(df_index_illu)
+
+if make_2nn == True:
+    H = constructHamiltonian(L = L, W = W, U = U, t = t, seed=seed)
+    _, vecs = np.linalg.eigh(H)
     d, chi2, R1 = nn2(vecs, plot=True, eps=0, return_R1=True)
-    st.pyplot(fig2)
-    st.write('The intrinsic dimension of this sample is ',round(d,2))
-    data.append([L,W,d])
-    df = pd.DataFrame(data, columns='L, W, ID'.split(', '))
-    table.table(df)
+    st.pyplot(fig)
+    st.write(text[6])
 
-
-    st.write('\nNext up; lets have a look at the nearest neighbour distance distribution!')
-    fig3 = plt.figure(figsize=(10,4))
+if make_r1 == True:
+    H = constructHamiltonian(L = L, W = W, U = U, t = t, seed=seed)
+    _, vecs = np.linalg.eigh(H)
+    d, chi2, R1 = nn2(vecs, plot=False, eps=0, return_R1=True)
     sns.distplot(R1)
-    st.pyplot(fig3)
-
-    '''Dunno what this should actually look like?'''
-
-
-    st.write('\n\n\n\nWould there be any value in importing data (perhaps place a button for this at the top. This could be used ot populate the table :D) If yes: plot the many ID_imshow and perhaps even perform scaling collapse')
-
-    st.write('\n\nEigencomponent dominance')
-    st.image('figures/EigCDom-L14-seeds20-ws11.png')
-    '''Well, this needs a background...'''
-
-    st.write('\n\nMany ID')
-    st.image('figures/2nn_many_L14.png')
-    '''Well, this needs a background...'''
-
-    st.write('\n\nScaling Collapse')
-    '''$$L^{-\zeta/\nu}a_{ij}=\tilde{f}\left(L^{1/\nu}(\varrho_j-\varrho_c)\right)$$'''
-    st.image('figures/collapsed_skip7.png')
-
-    st.write('\nThis analysis yields a critical point, $W_c=3.65\pm0.2$')
-    
-    
-
-
-
-
-
-
-
-#bot2 = st.button(label='Lets have a look at those eigencomponents')
-#if bot2 == True:
-
-
-    
+    st.pyplot(fig)
 
 
 
