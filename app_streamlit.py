@@ -93,6 +93,3 @@ if make_r1 == True:
     sns.distplot(R1)
     st.pyplot(fig)
 
-
-
-st.help(pd.DataFrame)

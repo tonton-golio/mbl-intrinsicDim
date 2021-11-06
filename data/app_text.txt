@@ -6,9 +6,9 @@ $$\mathcal{H} = t\sum_i^{L-1}(\hat{c}_{i+1}^\dagger \hat{c}_i +h.c.)
             + U\sum_{i}^{L-1} \hat{n}_i\hat{n}_{i+1}
             + \sum_{i}^L h_i\hat{n}_i.$$
 
-Ajuste parameters via sliders!
+Adjust parameters via sliders!
 
-Each site is associated with an energy. This energy is drawn from uniform random distribution in the range [-W,W]
+Each site is associated with an energy. This energy is drawn from uniform random distribution in the range [-W,W].
 
 Do note, that the x-axis postion for the potential is not the same as that for the eigvecs. For the potential, it is the site number, whereas for the eigenstates it is the configuration index. The configurations are indexed as follows
 
