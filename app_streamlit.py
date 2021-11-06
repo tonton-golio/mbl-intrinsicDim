@@ -17,7 +17,7 @@ L = st.sidebar.slider('System size, L',2,14,10,2)
 W = st.sidebar.slider('Disorder strength, W',0.1,10.,3.65,.1)
 U = st.sidebar.slider('Interaction strength, U',0.,2.,1.,.1)
 t = st.sidebar.slider('Hopping strenght, t',0.,2.,1.,.1)
-seed = st.sidebar.slider('seed',0,100,0,1)
+seed = st.sidebar.slider('seed',0,100,42,1)
 
 st.header('Functions')
 col1, col2, col3, col4 = st.columns(4)
