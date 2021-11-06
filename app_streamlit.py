@@ -33,16 +33,20 @@ if make_potential == True:
     V = np.random.uniform(-1,1,size=L) * W
     plt.title('Potential')
     plt.plot(np.arange(len(V)), V)
-    plt.scatter(np.arange(len(V)), V, c='r')
+    plt.scatter(np.arange(len(V)), V, c='b')
     plt.ylim(-W,W)
+    plt.xlabel('Site number', fontsize=12)
+    plt.ylabel('Potential', fontsize=12)
     st.pyplot(fig)
     st.write(text[4])
+    st.code('''np.random.seed(seed)
+    V = np.random.uniform(-1,1,size=L) * W''')
     
 
 if make_hamiltonian == True:
     H = constructHamiltonian(L = L, W = W, U = U, t = t, seed=seed)
     _, vecs = np.linalg.eigh(H)
-    plt.plot(np.arange(len(vecs)), vecs[:,:3])
+    plt.plot(np.arange(len(vecs)), vecs[:,:1])
     st.pyplot(fig)
 
     col1_inner, col2_inner = st.columns(2)
@@ -51,6 +55,27 @@ if make_hamiltonian == True:
     df_index_illu = pd.DataFrame(data_index_illu, columns=['Configuration'])
 
     _ = col2_inner.table(df_index_illu)
+    s2i, i2s = basisStates(L)
+    most_probable_config = i2s[sorted(list(i2s.keys()))[np.argmax(abs(vecs[:,0]))]]
+    st.write('The configuration with the largest probability for the most energetic eigenstate is', f'**{most_probable_config}**', 'illustrated by the red dots on the potential below.')
+
+    fig2 = plt.figure(figsize=(12,3))
+    np.random.seed(seed)
+    V = np.random.uniform(-1,1,size=L) * W
+    plt.title('Potential')
+    plt.plot(np.arange(len(V)), V)
+    plt.scatter(np.arange(len(V)), V, c='b')
+    plt.ylim(-W,W)
+    plt.xlabel('Site number', fontsize=12)
+    plt.ylabel('Potential', fontsize=12)
+
+    for index, i in enumerate(most_probable_config):
+        if i == '1':
+            plt.scatter(index, V[index], c='r', s=142)
+
+    st.pyplot(fig2)
+
+
 
 if make_2nn == True:
     H = constructHamiltonian(L = L, W = W, U = U, t = t, seed=seed)
