@@ -39,8 +39,10 @@ if make_potential == True:
     plt.ylabel('Potential', fontsize=12)
     st.pyplot(fig)
     st.write(text[4])
-    st.code('''np.random.seed(seed)
-    h = np.random.uniform(-1,1,size=L) * W''')
+    code1 = '''
+    np.random.seed(seed)
+    h = np.random.uniform(-1,1,size=L) * W'''
+    st.code(code1)
     
 
 if make_hamiltonian == True:
@@ -57,7 +59,7 @@ if make_hamiltonian == True:
     _ = col2_inner.table(df_index_illu)
     s2i, i2s = basisStates(L)
     most_probable_config = i2s[sorted(list(i2s.keys()))[np.argmax(abs(vecs[:,0]))]]
-    st.write('The configuration with the largest probability for the most energetic eigenstate is', f'**{most_probable_config}**', 'illustrated by the red dots on the potential below.')
+    st.write('The configuration with the largest probability for the most energetic eigenstate is', f'**{most_probable_config}**', 'and is shown by the red dots on the potential below.')
 
     fig2 = plt.figure(figsize=(12,3))
     np.random.seed(seed)
@@ -93,3 +95,4 @@ if make_r1 == True:
 
 
 
+st.help(pd.DataFrame)
