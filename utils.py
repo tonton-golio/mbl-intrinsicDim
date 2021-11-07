@@ -106,7 +106,7 @@ def energyDiagonal(bitString='010', V=[0,0.5,1] , U=1.0):
 					E += U
 	return E
 
-def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42, periodic_boundary_conditon=True, return_potential=False):
+def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42, periodic_boundary_conditon=True):
 	'''
 	Constructs the Hamiltonian matrix
 	________________
@@ -140,8 +140,6 @@ def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42, periodic_bound
 						H[s2i[new_state], s2i[key]], H[s2i[key], s2i[new_state]] = t ,t
 				else:
 					pass
-	if return_potential == True:
-		return H, V
 	return H
 
 def buildDiagSave(L = 10, num_seeds = 10, ws = [1,2,3], location = 'data/raw/'):
@@ -190,47 +188,9 @@ def eigenC_analysis(ws, num_lims=8,L=8, num_seeds=10, location='data/raw/'):
     below_lims = np.array([[[data_dict[W][seed]['lim'][lim] for seed in range(num_seeds)] for lim in lims]for W in ws])
     return maxs, below_lims/binomial(L)**2, lims
 
-def eigenC_plots(below_lims, maxs, ws,
-                 lims = np.logspace((1-8),0,8),
-                 num_seeds =10, L=8,
-                 colors = 'orange, lightblue, salmon, yellowgreen, grey, purple'.split(', ')
-                ):
-    # Plot 1: proportion below threshhold
-    mean_below = np.mean(below_lims,axis=2).T[::-1]
-    fig, ax  = plt.subplots(2,1, sharex=True, 
-                           gridspec_kw={'height_ratios':[2,1]},
-                           figsize=(8,5))
-    #print(len(mean_below))
-    for i, color in zip(range(len(mean_below)), colors):
-        #print(i)
-        try:
-            ax[0].fill_between(ws, mean_below[i], mean_below[i+1],
-                         label="{:.0e}".format(lims[::-1][i]),
-                         color=color, alpha=.3)
-        except IndexError:
-            ax[0].fill_between(ws, 0, mean_below[i],
-                         label="{:.0e}".format(lims[::-1][i]),
-                         color=color, alpha=.3)
-		
-    
-    # Plot 2: Maxs
-    for index, i in enumerate(maxs):
-        ax[1].scatter([ws[index]]*num_seeds, 1-i, c='b', alpha=2/num_seeds)
-        ax[1].scatter([ws[index]], 1-np.mean(i), c='r', alpha=0.9)
-
-    ax[1].grid()
-    # Labels and such
-    ax[0].legend(bbox_to_anchor=(.23, .75), fontsize=11)
-    ax[0].set_ylabel('Proportion of $|\kappa|<\zeta$ ', fontsize=14)
-    ax[1].legend(["point", "mean"],#bbox_to_anchor=(0.2, .25),
-    	facecolor='white', framealpha=1,
-        fontsize=12)
-    plt.xlabel('Disorder strength, $W$', fontsize=14)
-    ax[1].set_ylabel('$1-max(|\kappa|)$', fontsize=14)    
-    plt.suptitle('Eigencomponent, $\kappa$, dominance', fontsize=17)
 
 # 2NN
-def nn2(A, plot=False, eps=0, return_R1=False):
+def nn2(A, return_R1=False, return_xy=False):
 	'''
     Find intrinsic dimension (ID) via 2-nearest-neighbours
 
@@ -254,7 +214,7 @@ def nn2(A, plot=False, eps=0, return_R1=False):
     
     # Calculate mu
 	argsorted = np.sort(dist_M, axis=1)
-	mu =  argsorted[:,1]/(argsorted[:,0]+eps)
+	mu =  argsorted[:,1]/argsorted[:,0]
 	R1 = argsorted[:,0]
 	x = np.log(mu)
     
@@ -272,20 +232,14 @@ def nn2(A, plot=False, eps=0, return_R1=False):
     # Goodness
 	chi2, _ = chisquare(f_obs=x*d , f_exp=y, ddof=10)
 
-	if plot==True:
-		plt.scatter(x,y, c='purple', alpha=0.5)
-		plt.plot(x,x*d, c='orange', ls='-')
-		plt.title('2NN output for single realization', fontsize=16)
-		plt.xlabel('$\ln(\mu)$', fontsize=14)
-		plt.ylabel('$-\ln(1 - F(\mu))$', fontsize=14)
-		plt.text(np.mean(x)*.75, 4.2, s='$D_{int}$'+'={}'.format(round(d,1)))
-		plt.grid()
-        #plt.savefig('figures/2nnSingle_L{}'.format(10),dpi=400,bbox_inches='tight')
-    
 	if return_R1==True:
 		return d, chi2, R1
 
-	return d, chi2
+	elif return_xy == True:
+		return d, chi2, x,y
+
+	else:
+		return d, chi2
 
 def nn2_loop(ws, num_seeds, Ls, location='data/raw/'):
 	'''run 2nn for many disorders and many seeds...returns ID and chi2 in dict'''
@@ -326,3 +280,50 @@ def scale_collapse2(data, ws, Ls=[6,8],rho_c0=3.5,
     quality = fssa.quality(X,Y,da)
     fig.suptitle('$\overline{\mathcal{D}_{int}}$ with collapse on inset',fontsize=16)
     return res
+
+
+def random_index(x=5, N=252):
+    a = (np.random.random_sample(x)*N).astype(int)
+    while x!=len(set(a)):
+        a = np.append(a,int(np.random.random_sample()*N))
+    return a  # maybe use np.random.sample()
+
+def weighted_avg_and_std(values, weights):
+    """
+    Return the weighted average and standard deviation.
+
+    values, weights -- Numpy ndarrays with the same shape.
+    """
+    average = np.average(values, weights=weights)
+    # Fast and numerically precise:
+    variance = np.average((values-average)**2, weights=weights)
+    return average, np.sqrt(variance)
+
+def plateau(Ls = [6,8,10], W = 10, seed= 42,runs_lst = [2000,1000,200]):
+	data_dict = {}
+	data_dict['params'] = dict(zip(Ls, runs_lst))
+	data_dict['params']['W'] = W
+	data_dict['params']['seed'] = seed
+		
+	for L, runs in zip(Ls, runs_lst):
+		data_dict[L] = {}
+		N = binomial(L)
+		spacing = np.linspace(0.15,.9,12)
+		num_samples_lst = (spacing*N).astype(int)
+		inner_data_dict = {}
+
+		vals, vecs = np.linalg.eigh(constructHamiltonian(L=L, W=W, seed=seed, periodic_boundary_conditon=True))
+		data_dict[L][1.0] = {'id':nn2(vecs)[0], 'std':0}
+
+		for num_samples in tqdm(num_samples_lst):
+			tmp_id, tmp_q = [], []
+			for run in range(runs):
+				sample_index = random_index(num_samples, N)
+				vecs_sample = vecs[:,sample_index]
+				d, q = nn2(vecs_sample)
+				tmp_id.append(d)
+				tmp_q.append(q)
+
+			mean_id, std = weighted_avg_and_std(tmp_id, tmp_q)
+			data_dict[L][round(num_samples/N,3)] = {'id':mean_id, 'std':std}
+	return data_dict
