@@ -20,7 +20,7 @@ for sec in text:
 
 st.title('MBL intrinsic dimension')
 intro_text = [st.sidebar.write(text_dict['INTRO'][i]) for i in range(len(text_dict['INTRO'])-1)]
-latex = st.sidebar.latex(r'''{}'''.format(text_dict['INTRO'][2]))
+
 
 # Sidebar
 _ = st.sidebar.header(text_dict['SIDEBAR'][0])
@@ -33,19 +33,28 @@ V = construct_potential(L = 1000, W = W, seed=42, disorder_distribution =disorde
 sns.histplot(V, ax=ax_sidebar, bins=40)
 st.sidebar.pyplot(fig_sidebar)
 
-
-
-
 U = st.sidebar.slider('Interaction strength, U',0.,2.,1.,.1)
 t = st.sidebar.slider('Hopping strenght, t',0.,2.,1.,.1)
 seed = st.sidebar.slider('seed',0,100,42,1)
 
+# Add rows to a dataframe after
+# showing it.
+df1 = pd.DataFrame(data = np.array([[8,4.7, 'trimodal', True,1.0, 1.0, 42, 17.374, 0.6]]),
+            columns='L,W,disorder_distribution,periodic_boundary_condition,U,t,seed,id,chi2'.split(','))
+element = st.sidebar.dataframe(df1)
+
+
+# Add rows to a chart after
+# showing it.
+
+
 #st.header('Functions')
-col1, col2, col3, col4 = st.columns(4)
+col4, colx0,colx1,colx2,colx3, col1, col2, col3 = st.columns(8)
 make_potential = col1.button('Potential')
 make_hamiltonian = col2.button('Leading eigenstates')
 make_2nn = col3.button('2 nearest neighbours')
-make_r1 = col4.button('Nearest neighbour distribution')
+col4.latex(r'''{}'''.format(text_dict['INTRO'][2]))
+make_r1 = False# col4.button('Nearest neighbour distribution')
 
 fig = plt.figure(figsize=(12,3))
 
@@ -93,6 +102,11 @@ if make_2nn == True:
     H = constructHamiltonian(L = L, W = W, U = U, t = t, seed=seed, disorder_distribution=disorder_distribution, periodic_boundary_condition=periodic_boundary_condition)
     _, vecs = np.linalg.eigh(H)
     d, chi2, x,y = nn2(vecs, return_xy=True)
+    df2 =  pd.DataFrame(data=np.array([[L,W,disorder_distribution,periodic_boundary_condition,U,t,seed,round(d,3),round(chi2,3)]]),
+                columns='L,W,disorder_distribution,periodic_boundary_condition,U,t,seed,id,chi2'.split(','))
+    #st.dataframe(df2)
+    element.add_rows(df2)
+
     plot_2nn(x,y,d)
     st.pyplot(fig)
     st.write(text_dict['2NN'][0])
