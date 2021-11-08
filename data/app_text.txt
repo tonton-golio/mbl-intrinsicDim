@@ -4,9 +4,9 @@ _*''How disordered does a potential have be for the system to retain local memor
 
 We propose **dimension analysis via 2NN** (a neighbour graphs algorithm) can help to answer this question. To show our method we present and interactive tool for analysizing **eigenstates of the 1D Hubbard Hamiltonian**.
 
-$$\mathcal{H} = t\sum_i^{L-1}(\hat{c}_{i+1}^\dagger \hat{c}_i +h.c.) 
+\mathcal{H} = t\sum_i^{L-1}(\hat{c}_{i+1}^\dagger \hat{c}_i +h.c.) \\
             + U\sum_{i}^{L-1} \hat{n}_i\hat{n}_{i+1}
-            + \sum_{i}^L h_i\hat{n}_i.$$
+            + \sum_{i}^L h_i\hat{n}_i.
 
 #SIDEBAR
 
@@ -44,6 +44,12 @@ h = (np.random.normal(0,1,size=L)) * W
 
 np.random.seed(seed)
 h = np.concatenate([np.random.normal(W, size=L), np.random.normal(-W, size=L)])
+np.random.shuffle(h)
+
+#CODE_trimodal
+
+np.random.seed(seed)
+h = np.concatenate([np.random.normal(W, size=L), np.random.normal(0, size=L), np.random.normal(-W, size=L)])
 np.random.shuffle(h)
 
 #CODE_sinusoidal

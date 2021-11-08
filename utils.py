@@ -112,10 +112,13 @@ def construct_potential(L = 4, W = 2, seed=42, disorder_distribution ='uniform')
 	if disorder_distribution == 'uniform':
 		V = np.random.uniform(-1,1,size=L) * W
 	elif disorder_distribution == 'bimodal':
-		V = np.concatenate([np.random.normal(W, size=L), np.random.normal(-W, size=L)])
+		V = np.concatenate([np.random.normal(W, size=L//2), np.random.normal(-W, size=L//2)])
 		np.random.shuffle(V)
 	elif disorder_distribution == 'normal':
 		V = (np.random.normal(0,1,size=L)) * W
+	elif disorder_distribution =='trimodal':
+		V = np.concatenate([np.random.normal(W, size=L//3),np.random.normal(size=L-2*L//3), np.random.normal(-W, size=L//3)])
+		np.random.shuffle(V)
 	elif disorder_distribution =='sinusoidal':
 		V = np.cos(np.arange(L)*np.pi)
 	else:
@@ -123,7 +126,7 @@ def construct_potential(L = 4, W = 2, seed=42, disorder_distribution ='uniform')
 	return V
 
 
-def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42, periodic_boundary_conditon=True, disorder_distribution ='uniform'):
+def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42, periodic_boundary_condition=True, disorder_distribution ='uniform'):
 	'''
 	Constructs the Hamiltonian matrix
 	________________
@@ -150,7 +153,7 @@ def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42, periodic_bound
 					new_state = key[:site] + '0' + '1' + key[site+2:]
 					H[s2i[new_state], s2i[key]], H[s2i[key], s2i[new_state]] = t ,t
 			except IndexError: # periodic boundary conditions
-				if periodic_boundary_conditon == True:
+				if periodic_boundary_condition == True:
 					if (key[site] == '1' and key[0]== '0'):
 						new_state = '1' + key[1:site] + '0'
 						H[s2i[new_state], s2i[key]], H[s2i[key], s2i[new_state]] = t ,t

@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LogNorm
+from scipy.interpolate import interp1d
 
 def plot_eigencomponentDominance(below_lims, maxs, ws,
                  lims = np.logspace((1-8),0,8),
@@ -96,11 +97,29 @@ def plot_plateau(plateau_dict):
 
 ### STREAMLIT
 
-def plot_potential_st(V, W):
+def plot_potential_st(V, W, periodic_boundary_condition):
+    
+
+    
+    V = list(V)
+    V_periodic = np.array([V[len(V)-1]]+ V+ [V[0]])
+    if periodic_boundary_condition==True:
+        f = interp1d(np.arange(-1,len(V_periodic)-1), V_periodic, kind='cubic')
+
+        x = np.linspace(-1, len(V), num=420, endpoint=True)
+
+    else:
+        f = interp1d(np.arange(len(V)), V, kind='cubic')
+        x = np.linspace(0, len(V)-1, num=420, endpoint=True)
+        plt.plot([0,0], [V[0],100], c='orange', ls='--')
+        plt.plot([len(V)-1,len(V)-1], [V[-1],100], c='orange', ls='--')
+
     plt.title('Potential')
-    plt.plot(np.arange(len(V)), V)
-    plt.scatter(np.arange(len(V)), V, c='b')
-    plt.ylim(min([min(V)-0.2,-W]),max([max(V)+0.2,W]))
-    plt.xlabel('Site number', fontsize=12)
-    plt.ylabel('Potential', fontsize=12)
+    plt.plot(x, f(x), c='orange')
+    plt.scatter(np.arange(len(V)), V, c='b', marker='+')
+    plt.ylim(min([min(V),-W])*1.25,max([max(V),W])*1.25)
+    plt.xlim(-0.5, len(V)-0.5)
+    plt.xlabel('Site index', fontsize=12)
+    plt.ylabel('Energy', fontsize=12)
+
 
