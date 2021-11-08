@@ -117,8 +117,9 @@ def construct_potential(L = 4, W = 2, seed=42, disorder_distribution ='uniform')
 	elif disorder_distribution == 'normal':
 		V = (np.random.normal(0,1,size=L)) * W
 	elif disorder_distribution =='trimodal':
-		V = np.concatenate([np.random.normal(W, size=L//3),np.random.normal(size=L-2*L//3), np.random.normal(-W, size=L//3)])
+		V = np.concatenate([np.random.normal(W, size=L//3+1),np.random.normal(size=L-2*L//3), np.random.normal(-W, size=L//3+1)])
 		np.random.shuffle(V)
+		V = V[:L]
 	elif disorder_distribution =='sinusoidal':
 		V = np.cos(np.arange(L)*np.pi)
 	else:
