@@ -106,7 +106,24 @@ def energyDiagonal(bitString='010', V=[0,0.5,1] , U=1.0):
 					E += U
 	return E
 
-def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42, periodic_boundary_conditon=True):
+
+def construct_potential(L = 4, W = 2, seed=42, disorder_distribution ='uniform'):
+	np.random.seed(seed)
+	if disorder_distribution == 'uniform':
+		V = np.random.uniform(-1,1,size=L) * W
+	elif disorder_distribution == 'bimodal':
+		V = np.concatenate([np.random.normal(W, size=L), np.random.normal(-W, size=L)])
+		np.random.shuffle(V)
+	elif disorder_distribution == 'normal':
+		V = (np.random.normal(0,1,size=L)) * W
+	elif disorder_distribution =='sinusoidal':
+		V = np.cos(np.arange(L)*np.pi)
+	else:
+		V = np.random.uniform(-1,1,size=L) * W
+	return V
+
+
+def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42, periodic_boundary_conditon=True, disorder_distribution ='uniform'):
 	'''
 	Constructs the Hamiltonian matrix
 	________________
@@ -120,8 +137,7 @@ def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42, periodic_bound
 	returns:
 		Hamiltonian
 	'''
-	np.random.seed(seed)
-	V = np.random.uniform(-1,1,size=L) * W
+	V = construct_potential(L = L, W = W, seed=seed, disorder_distribution =disorder_distribution)
 	num_states = binomial(L)
 	H = np.zeros((num_states,num_states))
 	(s2i, i2s) = basisStates(L)

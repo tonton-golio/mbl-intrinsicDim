@@ -50,8 +50,6 @@ def plot_2nn(x,y,d):
     plt.text(np.mean(x)*.75, np.mean(y)*1.5, s='$D_{int}$'+'={}'.format(round(d,1)), fontsize=14)
     plt.grid()
 
-
-
 def plot_2nn_imshow(data, ws):
     imshow = plt.imshow(data,
             aspect=.5*data.shape[1]/data.shape[0],cmap = 'inferno', norm=LogNorm())
@@ -65,8 +63,6 @@ def plot_2nn_imshow(data, ws):
     ax = imshow.axes
     ax.invert_yaxis()
 
-    
-
 def plot_2nn_avgs(ID_avgs, Ls, ws, num_seeds):
     for index, L in enumerate(Ls):
         plt.plot(ws,ID_avgs[index], label='L={}'.format(L))
@@ -76,7 +72,6 @@ def plot_2nn_avgs(ID_avgs, Ls, ws, num_seeds):
     plt.ylabel('weighted average ID', fontsize=13)
     plt.title('ID from 2nn weigted average, seeds={}, ws={}'.format(L,num_seeds,len(ws)), fontsize=16)
     plt.show()
-
 
 def plot_plateau(plateau_dict):
     plt.figure(figsize=(6,4),tight_layout=True)
@@ -98,3 +93,14 @@ def plot_plateau(plateau_dict):
             ncol=4, fancybox=True, shadow=True)
     plt.grid()
     return plateau_dict['params']
+
+### STREAMLIT
+
+def plot_potential_st(V, W):
+    plt.title('Potential')
+    plt.plot(np.arange(len(V)), V)
+    plt.scatter(np.arange(len(V)), V, c='b')
+    plt.ylim(min([min(V)-0.2,-W]),max([max(V)+0.2,W]))
+    plt.xlabel('Site number', fontsize=12)
+    plt.ylabel('Potential', fontsize=12)
+
