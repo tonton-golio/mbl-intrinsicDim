@@ -109,7 +109,7 @@ if make_hamiltonian == True:
         #st.write(probable_config)
         for index, i in enumerate(probable_config):
             if i == '1':
-                plt.scatter(index, V[index], c='r', s=142, label=state, alpha=.7)
+                plt.scatter(index, V[index], c='purple', s=142, label=state, alpha=.57)
     #plt.legend()
     st.pyplot(fig2)
 
