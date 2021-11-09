@@ -6,9 +6,7 @@ import pandas as pd
 import seaborn as sns
 from plotting import *
 
-
 st.set_page_config(layout='wide')
-
 
 text_dict = {}
 with open('data/app_text.txt') as f:
@@ -17,25 +15,28 @@ for sec in text:
     lines = sec.split('\n\n')
     text_dict[lines[0]] = dict(zip(range(len(lines)-2),lines[1:-1]))
 
-
-st.title('MBL intrinsic dimension')
-intro_text = [st.sidebar.write(text_dict['INTRO'][i]) for i in range(len(text_dict['INTRO'])-1)]
-
-
 # Sidebar
-_ = st.sidebar.header(text_dict['SIDEBAR'][0])
+st.sidebar.title('MBL intrinsic dimension')
+#_ = st.sidebar.header(text_dict['SIDEBAR'][0])
 L = st.sidebar.slider('System size, L',2,14,10,2)
-W = st.sidebar.slider('Disorder strength, W',0.1,10.,3.65,.1)
-disorder_distribution = st.sidebar.selectbox('disorder_distribution', ['uniform', 'bimodal', 'normal', 'sinusoidal', 'trimodal'])
-periodic_boundary_condition = st.sidebar.checkbox('periodic_boundary_condition')
+
+col1s0, col2s0 = st.sidebar.columns(2)
+W = col1s0.slider('Disorder strength, W',0.1,10.,3.65,.1)
+disorder_distribution = col2s0.selectbox('disorder_distribution', ['uniform', 'bimodal', 'normal', 'trimodal'])
+
 fig_sidebar, ax_sidebar = plt.subplots(1,1,figsize=(3,1))
 V = construct_potential(L = 1000, W = W, seed=42, disorder_distribution =disorder_distribution)
-sns.histplot(V, ax=ax_sidebar, bins=40)
+sns.histplot(V, ax=ax_sidebar, bins=100)
 st.sidebar.pyplot(fig_sidebar)
 
-U = st.sidebar.slider('Interaction strength, U',0.,2.,1.,.1)
-t = st.sidebar.slider('Hopping strenght, t',0.,2.,1.,.1)
-seed = st.sidebar.slider('seed',0,100,42,1)
+col1s1, col2s1 = st.sidebar.columns(2)
+seed = col1s1.slider('Seed',0,100,42,1)
+periodic_boundary_condition = col2s1.checkbox('periodic boundaries')
+
+col1s2, col2s2 = st.sidebar.columns(2)
+U = col1s2.slider('Interaction, U',0.,2.,1.,.1)
+t = col2s2.slider('Hopping, t',0.,2.,1.,.1)
+
 
 # Add rows to a dataframe after
 # showing it.
@@ -49,14 +50,26 @@ element = st.sidebar.dataframe(df1)
 
 
 #st.header('Functions')
-col4, colx0,colx1,colx2,colx3, col1, col2, col3 = st.columns(8)
+col0, col1, col2, col3 = st.columns(4)
 make_potential = col1.button('Potential')
 make_hamiltonian = col2.button('Leading eigenstates')
 make_2nn = col3.button('2 nearest neighbours')
-col4.latex(r'''{}'''.format(text_dict['INTRO'][2]))
+background = col0.button('Background', True)
+
+buttons = [make_potential, make_hamiltonian, make_2nn]
+
+if sum(buttons) == 0:
+    background = True
+
 make_r1 = False# col4.button('Nearest neighbour distribution')
 
 fig = plt.figure(figsize=(12,3))
+
+if background == True:
+    st.title('Many-body Localization via Intrinsic Dimension')
+
+    intro_text = [st.write(text_dict['INTRO'][i]) for i in range(len(text_dict['INTRO'])-1)]
+    st.latex(r'''{}'''.format(text_dict['INTRO'][2]))
 
 
 if make_potential == True:

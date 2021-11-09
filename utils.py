@@ -120,8 +120,6 @@ def construct_potential(L = 4, W = 2, seed=42, disorder_distribution ='uniform')
 		V = np.concatenate([np.random.normal(W, size=L//3+1),np.random.normal(size=L-2*L//3), np.random.normal(-W, size=L//3+1)])
 		np.random.shuffle(V)
 		V = V[:L]
-	elif disorder_distribution =='sinusoidal':
-		V = np.cos(np.arange(L)*np.pi)
 	else:
 		V = np.random.uniform(-1,1,size=L) * W
 	return V
