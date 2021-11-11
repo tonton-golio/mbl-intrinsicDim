@@ -1,9 +1,10 @@
 #!/bin/bash
-savedir="/home/projects/ku_00067/scratch/mbl-intrinsicdimension/results_paper/"
+savedir="/home/projects/ku_00067/scratch/mbl-intrinsicdimension/paper_data/"
 
-L=14
-
-for i in `seq 0 9`
+for L in 8 #10 12 14 16
 do
-	qsub -v output_path=$savedir,L=$L,S=$i, -N hubbard-2NN-L-$L-S-$i controlscript.pbs
+	for i in 0 #`seq 0 9`
+	do
+		qsub -v output_path=$savedir,L=$L,S=$i, -N 2NN-L-$L-S-$i controlscript.pbs
+	done
 done

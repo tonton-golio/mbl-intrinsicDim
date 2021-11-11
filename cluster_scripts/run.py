@@ -1,6 +1,7 @@
 from utils_cluster import *
 import argparse
 import os
+import numpy as np
 from numpy import save, load, array
 
 def run(L, seed, output_path):
@@ -9,9 +10,9 @@ def run(L, seed, output_path):
     for W in Ws:
         H = constructHamiltonian(L = L, W = W, seed=seed)
         _, eigvecs = np.linalg.eigh(H)
-        ID, chi2 = nn2(eigvecs)
-        ID_and_chi2.append([ID, chi2])
-    filename = output_path+'2nn_L{}_seed{}'+'.npy'
+        ID, chi2, r1, r2 = nn2(eigvecs)
+        ID_and_chi2.append({'ID':ID, 'chi2':chi2, 'r1':r1, 'r2':r2})
+    filename = output_path+'2nn_L_{0}_seed_{1}'.format(L, seed)+'.npy'
     np.save(filename, array(ID_and_chi2))
 
 if __name__ == '__main__':
@@ -28,5 +29,3 @@ if __name__ == '__main__':
         print("Directory '%s' could not be created" % args.output_path)
     
     run(args.L, args.S, args.output_path)
-
-    

@@ -1,5 +1,10 @@
 from math import factorial
+<<<<<<< HEAD
 from numpy import zeros, random, array, sort, argsort, arange, log, vstack, eye, sum, mean
+=======
+import numpy as np
+from numpy import zeros, random, array, sort, argsort, arange, log, vstack, eye
+>>>>>>> 304be4646427f03e560835141a9f22a04a9bfad6
 from numpy.linalg import eigh,lstsq
 from scipy.stats import chisquare
 from scipy.optimize import curve_fit
@@ -160,12 +165,20 @@ def nn2(A, plot=False):
 	N  = len(A)
     #Make distance matrix
 	dist_M = array([[sum(abs(a-b)) if index0 < index1 else 0 for index1, b in enumerate(A)] for index0, a in enumerate(A)])
+	# Add an offset to the diagonal to avoid having a nearest neighbor distance of 0
 	dist_M += dist_M.T + eye(N)*42
     
     # Calculate mu
+<<<<<<< HEAD
 	Msorted = sort(dist_M, axis=1)
 	r1, r2 = Msorted[:,0], Msorted[:,1]
 	mu =  r2/r1
+=======
+	argsorted = sort(dist_M, axis=1)
+	r1 = argsorted[:,0]
+	r2 = argsorted[:,1]
+	mu = r2/r1
+>>>>>>> 304be4646427f03e560835141a9f22a04a9bfad6
 	x = log(mu)
     
     # Permutation
@@ -177,6 +190,7 @@ def nn2(A, plot=False):
 	y = -1*log(y)
     
     #fit line through origin to get the dimension
+<<<<<<< HEAD
 	#d = lstsq(vstack([x, zeros(len(x))]).T, y, rcond=None)[0][0]
 	popt, pcov = curve_fit(linear_origin_bound, x, y)
 
@@ -186,3 +200,14 @@ def nn2(A, plot=False):
 	R2 = 1 - sum((y-popt[0]*x)**2)/ sum((y-mean(y))**2)
 
 	return popt[0], R2, r1
+=======
+	fit = lstsq(vstack([x, zeros(len(x))]).T, y, rcond=None)
+	d = fit[0][0]
+	residuals = fit[1]
+
+    # Goodness
+	#chi2, _ = chisquare(f_obs=x*d , f_exp=y, ddof=0)
+	rsquared = 1 - residuals / (len(y) * np.var(y))
+    
+	return d, rsquared, r1, r2
+>>>>>>> 304be4646427f03e560835141a9f22a04a9bfad6
