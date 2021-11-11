@@ -1,8 +1,6 @@
 from math import factorial
-from numpy import zeros, random, array, sort, argsort, arange, log, vstack, eye, sum, mean
+from numpy import zeros, random, array, sort, argsort, arange, log, vstack, eye, sum, mean, var
 from numpy.linalg import eigh,lstsq
-from scipy.stats import chisquare
-from scipy.optimize import curve_fit
     
 ## Building the Hamiltonian 
 def binaryConvert(x=5, L=4):
@@ -184,6 +182,6 @@ def nn2(A, plot=False):
 
     # Goodness
 	#chi2, _ = chisquare(f_obs=x*d , f_exp=y, ddof=0)
-	rsquared = 1 - residuals / (len(y) * np.var(y))
+	rsquared = 1 - residuals / (len(y) * var(y))
     
 	return d, rsquared, r1, r2
