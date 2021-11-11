@@ -169,16 +169,9 @@ def nn2(A, plot=False):
 	dist_M += dist_M.T + eye(N)*42
     
     # Calculate mu
-<<<<<<< HEAD
 	Msorted = sort(dist_M, axis=1)
 	r1, r2 = Msorted[:,0], Msorted[:,1]
 	mu =  r2/r1
-=======
-	argsorted = sort(dist_M, axis=1)
-	r1 = argsorted[:,0]
-	r2 = argsorted[:,1]
-	mu = r2/r1
->>>>>>> 304be4646427f03e560835141a9f22a04a9bfad6
 	x = log(mu)
     
     # Permutation
@@ -190,17 +183,6 @@ def nn2(A, plot=False):
 	y = -1*log(y)
     
     #fit line through origin to get the dimension
-<<<<<<< HEAD
-	#d = lstsq(vstack([x, zeros(len(x))]).T, y, rcond=None)[0][0]
-	popt, pcov = curve_fit(linear_origin_bound, x, y)
-
-
-    # Goodness
-	#chi2, _ = chisquare(f_obs=x*d , f_exp=y, ddof=10)
-	R2 = 1 - sum((y-popt[0]*x)**2)/ sum((y-mean(y))**2)
-
-	return popt[0], R2, r1
-=======
 	fit = lstsq(vstack([x, zeros(len(x))]).T, y, rcond=None)
 	d = fit[0][0]
 	residuals = fit[1]
@@ -210,4 +192,3 @@ def nn2(A, plot=False):
 	rsquared = 1 - residuals / (len(y) * np.var(y))
     
 	return d, rsquared, r1, r2
->>>>>>> 304be4646427f03e560835141a9f22a04a9bfad6
