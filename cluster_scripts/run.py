@@ -12,7 +12,7 @@ def run(L, seed, output_path):
         _, eigvecs = np.linalg.eigh(H)
         ID, chi2, r1, r2 = nn2(eigvecs)
         ID_and_chi2.append({'ID':ID, 'chi2':chi2, 'r1':r1, 'r2':r2})
-    filename = output_path+'2nn_L{}_seed{}'+'.npy'
+    filename = output_path+'2nn_L_{0}_seed_{1}'.format(L, seed)+'.npy'
     np.save(filename, array(ID_and_chi2))
 
 if __name__ == '__main__':
