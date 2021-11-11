@@ -1,6 +1,5 @@
 from math import factorial
-from numpy import zeros, random, array, sort, argsort, arange, log, vstack, eye, sum, mean, var
-from numpy.linalg import eigh,lstsq
+from numpy import zeros, random, array, sort, argsort, arange, log, eye, sum, mean
 from scipy.optimize import curve_fit
 
     
