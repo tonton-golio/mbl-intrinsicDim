@@ -6,9 +6,7 @@ import pandas as pd
 import seaborn as sns
 from plotting import *
 
-
 st.set_page_config(layout='wide')
-
 
 text_dict = {}
 with open('data/app_text.txt') as f:
@@ -17,25 +15,35 @@ for sec in text:
     lines = sec.split('\n\n')
     text_dict[lines[0]] = dict(zip(range(len(lines)-2),lines[1:-1]))
 
-
-st.title('MBL intrinsic dimension')
-intro_text = [st.sidebar.write(text_dict['INTRO'][i]) for i in range(len(text_dict['INTRO'])-1)]
-
-
 # Sidebar
-_ = st.sidebar.header(text_dict['SIDEBAR'][0])
-L = st.sidebar.slider('System size, L',2,14,10,2)
-W = st.sidebar.slider('Disorder strength, W',0.1,10.,3.65,.1)
-disorder_distribution = st.sidebar.selectbox('disorder_distribution', ['uniform', 'bimodal', 'normal', 'sinusoidal', 'trimodal'])
-periodic_boundary_condition = st.sidebar.checkbox('periodic_boundary_condition')
+st.sidebar.title('MBL intrinsic dimension')
+#_ = st.sidebar.header(text_dict['SIDEBAR'][0])
+
+col1s1, col2s1 = st.sidebar.columns(2)
+L = col1s1.slider('System size, L',2,14,10,2)
+seed = col2s1.slider('Seed',0,100,42,1)
+
+col1s0, col2s0 = st.sidebar.columns(2)
+W = col1s0.slider('Disorder strength, W',0.1,10.,3.65,.1)
+disorder_distribution = col2s0.selectbox('disorder_distribution', ['uniform','normal','bimodal','trimodal'])
+
 fig_sidebar, ax_sidebar = plt.subplots(1,1,figsize=(3,1))
-V = construct_potential(L = 1000, W = W, seed=42, disorder_distribution =disorder_distribution)
-sns.histplot(V, ax=ax_sidebar, bins=40)
+ax_sidebar.patch.set_facecolor('orange')
+ax_sidebar.patch.set_alpha(0.19)
+
+fig_sidebar.patch.set_facecolor('blue')
+fig_sidebar.patch.set_alpha(0.0)
+
+V = construct_potential(L = L, W = W, seed=seed, disorder_distribution =disorder_distribution)
+sns.kdeplot(V, ax=ax_sidebar)
 st.sidebar.pyplot(fig_sidebar)
 
-U = st.sidebar.slider('Interaction strength, U',0.,2.,1.,.1)
-t = st.sidebar.slider('Hopping strenght, t',0.,2.,1.,.1)
-seed = st.sidebar.slider('seed',0,100,42,1)
+periodic_boundary_condition = st.sidebar.checkbox('periodic boundaries')
+
+col1s2, col2s2 = st.sidebar.columns(2)
+U = col1s2.slider('Interaction, U',0.,2.,1.,.1)
+t = col2s2.slider('Hopping, t',0.,2.,1.,.1)
+
 
 # Add rows to a dataframe after
 # showing it.
@@ -49,14 +57,26 @@ element = st.sidebar.dataframe(df1)
 
 
 #st.header('Functions')
-col4, colx0,colx1,colx2,colx3, col1, col2, col3 = st.columns(8)
+col0, col1, col2, col3 = st.columns(4)
 make_potential = col1.button('Potential')
 make_hamiltonian = col2.button('Leading eigenstates')
 make_2nn = col3.button('2 nearest neighbours')
-col4.latex(r'''{}'''.format(text_dict['INTRO'][2]))
+background = col0.button('Background', True)
+
+buttons = [make_potential, make_hamiltonian, make_2nn]
+
+if sum(buttons) == 0:
+    background = True
+
 make_r1 = False# col4.button('Nearest neighbour distribution')
 
 fig = plt.figure(figsize=(12,3))
+sns.set_style("whitegrid")
+if background == True:
+    st.title('Many-body Localization via Intrinsic Dimension')
+
+    intro_text = [st.write(text_dict['INTRO'][i]) for i in range(len(text_dict['INTRO'])-1)]
+    st.latex(r'''{}'''.format(text_dict['INTRO'][2]))
 
 
 if make_potential == True:
@@ -70,15 +90,11 @@ if make_potential == True:
 if make_hamiltonian == True:
     H = constructHamiltonian(L = L, W = W, U = U, t = t, seed=seed, disorder_distribution=disorder_distribution, periodic_boundary_condition=periodic_boundary_condition)
     _, vecs = np.linalg.eigh(H)
-    plt.plot(np.arange(len(vecs)), vecs[:,:1])
+    plt.plot(np.arange(len(vecs)), vecs[:,:1]**2, c='purple', lw=2)
+    plt.xlabel('Configuration index', fontsize=12)
+    plt.ylabel('Probability', fontsize=12)
     st.pyplot(fig)
 
-    col1_inner, col2_inner = st.columns(2)
-    _ = col1_inner.write(text_dict['EIGENSTATES'][0])
-    data_index_illu = ['000111', '001011', '001101', '001110']
-    df_index_illu = pd.DataFrame(data_index_illu, columns=['Configuration'])
-
-    _ = col2_inner.table(df_index_illu)
     s2i, i2s = basisStates(L)
     most_probable_config = i2s[sorted(list(i2s.keys()))[np.argmax(abs(vecs[:,0]))]]
     st.write(text_dict['EIGENSTATES'][1]+ f' **{most_probable_config}** '+text_dict['EIGENSTATES'][2])
@@ -93,9 +109,15 @@ if make_hamiltonian == True:
         #st.write(probable_config)
         for index, i in enumerate(probable_config):
             if i == '1':
-                plt.scatter(index, V[index], c='r', s=142, label=state, alpha=1)
+                plt.scatter(index, V[index], c='purple', s=142, label=state, alpha=.57)
     #plt.legend()
     st.pyplot(fig2)
+
+    col1_inner, col2_inner = st.columns(2)
+    _ = col1_inner.write(text_dict['EIGENSTATES'][0])
+    data_index_illu = ['000111', '001011', '001101', '001110']
+    df_index_illu = pd.DataFrame(data_index_illu, columns=['Configuration'])
+    _ = col2_inner.table(df_index_illu)
 
 
 if make_2nn == True:

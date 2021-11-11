@@ -24,7 +24,7 @@ Do note, that the x-axis postion for the potential is not the same as that for t
 
 The configuration with the largest probability for the most energetic eigenstate is
 
-and is shown by the red dots on the potential below.
+and is shown by the purple dots on the potential below.
 
 #2NN
 

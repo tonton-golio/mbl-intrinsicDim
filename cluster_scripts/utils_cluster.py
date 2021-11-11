@@ -119,7 +119,7 @@ def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42):
 	returns:
 		Hamiltonian
 	'''
-	np.random.seed(seed)
+	random.seed(seed)
 	V = random.uniform(-1,1,size=L) * W
 	num_states = binomial(L)
 	H = zeros((num_states,num_states))
@@ -142,7 +142,6 @@ def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42):
 def nn2(A, plot=False):
 	'''
     Find intrinsic dimension (ID) via 2-nearest-neighbours
-
     https://www.nature.com/articles/s41598-017-11873-y
     https://arxiv.org/pdf/2006.12953.pdf
     _______________
