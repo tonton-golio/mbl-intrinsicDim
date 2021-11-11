@@ -1,4 +1,5 @@
 from math import factorial
+import numpy as np
 from numpy import zeros, random, array, sort, argsort, arange, log, vstack, eye
 from numpy.linalg import eigh,lstsq
 from scipy.stats import chisquare
@@ -157,11 +158,14 @@ def nn2(A, plot=False):
 	N  = len(A)
     #Make distance matrix
 	dist_M = array([[sum(abs(a-b)) if index0 < index1 else 0 for index1, b in enumerate(A)] for index0, a in enumerate(A)])
+	# Add an offset to the diagonal to avoid having a nearest neighbor distance of 0
 	dist_M += dist_M.T + eye(N)*42
     
     # Calculate mu
 	argsorted = sort(dist_M, axis=1)
-	mu =  argsorted[:,1]/argsorted[:,0]
+	r1 = argsorted[:,0]
+	r2 = argsorted[:,1]
+	mu = r2/r1
 	x = log(mu)
     
     # Permutation
@@ -176,8 +180,6 @@ def nn2(A, plot=False):
 	d = lstsq(vstack([x, zeros(len(x))]).T, y, rcond=None)[0][0]
 
     # Goodness
-	chi2, _ = chisquare(f_obs=x*d , f_exp=y, ddof=10)
+	chi2, _ = chisquare(f_obs=x*d , f_exp=y, ddof=0)
     
-	return d, chi2
-
-
+	return d, chi2, r1, r2
