@@ -1,10 +1,5 @@
 from math import factorial
-<<<<<<< HEAD
 from numpy import zeros, random, array, sort, argsort, arange, log, vstack, eye, sum, mean
-=======
-import numpy as np
-from numpy import zeros, random, array, sort, argsort, arange, log, vstack, eye
->>>>>>> 304be4646427f03e560835141a9f22a04a9bfad6
 from numpy.linalg import eigh,lstsq
 from scipy.stats import chisquare
 from scipy.optimize import curve_fit
