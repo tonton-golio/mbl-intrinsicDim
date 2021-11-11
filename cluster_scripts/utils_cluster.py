@@ -1,6 +1,8 @@
 from math import factorial
 from numpy import zeros, random, array, sort, argsort, arange, log, vstack, eye, sum, mean, var
 from numpy.linalg import eigh,lstsq
+from scipy.optimize import curve_fit
+
     
 ## Building the Hamiltonian 
 def binaryConvert(x=5, L=4):
@@ -176,12 +178,14 @@ def nn2(A, plot=False):
 	y = -1*log(y)
     
     #fit line through origin to get the dimension
-	fit = lstsq(vstack([x, zeros(len(x))]).T, y, rcond=None)
-	d = fit[0][0]
-	residuals = fit[1]
+	#fit = lstsq(vstack([x, zeros(len(x))]).T, y, rcond=None)
+	popt, pcov = curve_fit(linear_origin_bound, x, y)
+	d = popt[0]
 
     # Goodness
-	#chi2, _ = chisquare(f_obs=x*d , f_exp=y, ddof=0)
-	rsquared = 1 - residuals / (len(y) * var(y))
-    
+	#residuals = fit[1]
+	#rsquared = 1 - residuals / (len(y) * var(y))
+	rsquared = 1 - sum((y-popt[0]*x)**2)/ sum((y-mean(y))**2)
+	
+
 	return d, rsquared, r1, r2
