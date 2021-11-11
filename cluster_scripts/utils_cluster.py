@@ -177,9 +177,12 @@ def nn2(A, plot=False):
 	y = -1*log(y)
     
     #fit line through origin to get the dimension
-	d = lstsq(vstack([x, zeros(len(x))]).T, y, rcond=None)[0][0]
+	fit = lstsq(vstack([x, zeros(len(x))]).T, y, rcond=None)
+	d = fit[0][0]
+	residuals = fit[1]
 
     # Goodness
-	chi2, _ = chisquare(f_obs=x*d , f_exp=y, ddof=0)
+	#chi2, _ = chisquare(f_obs=x*d , f_exp=y, ddof=0)
+	rsquared = 1 - residuals / (len(y) * np.var(y))
     
-	return d, chi2, r1, r2
+	return d, rsquared, r1, r2
