@@ -1,7 +1,8 @@
 from math import factorial
-from numpy import zeros, random, array, sort, argsort, arange, log, vstack, eye
+from numpy import zeros, random, array, sort, argsort, arange, log, vstack, eye, sum, mean
 from numpy.linalg import eigh,lstsq
 from scipy.stats import chisquare
+from scipy.optimize import curve_fit
     
 ## Building the Hamiltonian 
 def binaryConvert(x=5, L=4):
@@ -138,6 +139,9 @@ def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42):
 	return H
 
 ## 2NN
+def linear_origin_bound(x, a):
+    return a * x
+
 def nn2(A, plot=False):
 	'''
     Find intrinsic dimension (ID) via 2-nearest-neighbours
@@ -159,8 +163,9 @@ def nn2(A, plot=False):
 	dist_M += dist_M.T + eye(N)*42
     
     # Calculate mu
-	argsorted = sort(dist_M, axis=1)
-	mu =  argsorted[:,1]/argsorted[:,0]
+	Msorted = sort(dist_M, axis=1)
+	r1, r2 = Msorted[:,0], Msorted[:,1]
+	mu =  r2/r1
 	x = log(mu)
     
     # Permutation
@@ -172,9 +177,12 @@ def nn2(A, plot=False):
 	y = -1*log(y)
     
     #fit line through origin to get the dimension
-	d = lstsq(vstack([x, zeros(len(x))]).T, y, rcond=None)[0][0]
+	#d = lstsq(vstack([x, zeros(len(x))]).T, y, rcond=None)[0][0]
+	popt, pcov = curve_fit(linear_origin_bound, x, y)
+
 
     # Goodness
-	chi2, _ = chisquare(f_obs=x*d , f_exp=y, ddof=10)
-    
-	return d, chi2
+	#chi2, _ = chisquare(f_obs=x*d , f_exp=y, ddof=10)
+	R2 = 1 - sum((y-popt[0]*x)**2)/ sum((y-mean(y))**2)
+
+	return popt[0], R2, r1
