@@ -17,7 +17,7 @@ for sec in text:
 
 # Sidebar
 st.sidebar.title('MBL intrinsic dimension')
-st.sidebar.write("Main website [anton.gg](https://share.streamlit.io/mesmith027/streamlit_webapps/main/MC_pi/streamlit_app.py)")
+st.sidebar.write("Main website [anton.gg](https://anton.gg)")
 
 
 #_ = st.sidebar.header(text_dict['SIDEBAR'][0])
