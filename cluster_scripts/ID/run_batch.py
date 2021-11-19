@@ -6,10 +6,10 @@ import argparse
 import numpy as np
 
 def run(L, startseed, endseed, output_path):
-    data = []
     Ws = np.concatenate([np.arange(1,2.6,0.2), np.arange(2.6,4.55,0.05), np.arange(4.7,6.2,0.2)])
 
     for seed in range(startseed, endseed):
+        data = []
         for W in Ws:
             H = constructHamiltonian(L = L, W = W, seed=seed)
             _, eigvecs = np.linalg.eigh(H)
