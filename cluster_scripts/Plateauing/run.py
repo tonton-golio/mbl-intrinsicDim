@@ -1,8 +1,9 @@
+# Add parent directory to path, so that we can find the utils_cluster module
+import os, sys
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from utils_cluster import *
 import argparse
-import os
 import numpy as np
-from numpy import save, load, array
 
 def run(L, seed, output_path):
     # Fixed high disorder to confirm ID ~> L
