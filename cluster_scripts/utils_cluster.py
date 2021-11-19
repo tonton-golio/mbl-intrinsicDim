@@ -160,7 +160,7 @@ def nn2(A, plot=False):
     #Make distance matrix
 	dist_M = array([[sum(abs(a-b)) if index0 < index1 else 0 for index1, b in enumerate(A)] for index0, a in enumerate(A)])
 	# Add an offset to the diagonal to avoid having a nearest neighbor distance of 0
-	dist_M += dist_M.T + eye(N)*42
+	dist_M += dist_M.T + eye(N)*1e6
     
     # Calculate mu
 	Msorted = sort(dist_M, axis=1)
@@ -181,10 +181,7 @@ def nn2(A, plot=False):
 	popt, pcov = curve_fit(linear_origin_bound, x, y)
 	d = popt[0]
 
-    # Goodness
-	#residuals = fit[1]
-	#rsquared = 1 - residuals / (len(y) * var(y))
+    # Goodness of fit with R^2
 	rsquared = 1 - sum((y-popt[0]*x)**2)/ sum((y-mean(y))**2)
-	
 
-	return d, rsquared, r1, r2
+	return d, rsquared, r1
