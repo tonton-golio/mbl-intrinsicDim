@@ -8,4 +8,4 @@ module load anaconda3/2020.07
 
 cd $PBS_O_WORKDIR
 
-/usr/bin/time python3 run.py $output_path -L $L -Ss $Ss -Se $Se
+/usr/bin/time python3 run_batch.py $output_path -L $L -Ss $Ss -Se $Se
