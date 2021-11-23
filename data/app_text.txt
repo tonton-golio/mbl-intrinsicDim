@@ -1,6 +1,6 @@
 #INTRO
 
-_*''How disordered does a potential have be for the system to retain local memory.''* -P. W. Anderson 1958_
+*How disordered does a potential have be for the system to retain local memory?*
 
 We propose **dimension analysis via 2NN** (a neighbour graphs algorithm) can help to answer this question. To show our method we present and interactive tool for analysizing **eigenstates of the 1D Hubbard Hamiltonian**.
 
