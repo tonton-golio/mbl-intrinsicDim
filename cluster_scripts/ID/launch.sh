@@ -35,9 +35,12 @@ savedir="/home/projects/ku_00067/scratch/mbl-intrinsicdimension/paper_data/"
 #done
 #
 L=16
-for i in `seq 2 30`
+for i in `seq 0 10`
 do
-	qsub -l walltime=48:00:00,mem=32gb -v output_path=$savedir,L=$L,S=$i -N 2NN-L-$L-S-$i controlscript.pbs
+	for W in 1.   1.2  1.4  1.6  1.8  2.   2.2  2.4  2.6  2.65 2.7  2.75 2.8  2.85 2.9  2.95 3.   3.05 3.1  3.15 3.2  3.25 3.3  3.35 3.4  3.45 3.5  3.55 3.6  3.65 3.7  3.75 3.8  3.85 3.9  3.95 4.   4.05 4.1  4.15 4.2  4.25 4.3  4.35 4.4  4.45 4.5  4.7  4.9  5.1  5.3  5.5  5.7  5.9  6.1
+	do
+		qsub -l walltime=48:00:00,mem=32gb -v output_path=$savedir,L=$L,S=$i,W=$W -N 2NN-L-$L-S-$i-W-$W controlscript_for_W.pbs
+	done
 done
 
 #L=18
