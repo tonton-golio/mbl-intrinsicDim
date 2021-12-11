@@ -16,15 +16,15 @@ def run(L, seed, output_path):
     num_averages = 1000
     for fraction in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]:
         ID_vs_fraction[fraction] = []
-	for a in range(num_averages):
-	    # Take 'fraction' many eigenstates, random and uniformly
+        for a in range(num_averages):
+            # Take 'fraction' many eigenstates, random and uniformly
             sample = np.random.choice(range(len(eigvecs)))
-	    # Compute ID for this sample
- 	    ID, rsquared, nndist = nn2(eigvecs[:,sample])
-	    ID_vs_fraction[fraction].append([ID,rsquared])
-	    # We could stop here for fraction = 1.0, but having num_average identical samples
+            # Compute ID for this sample
+            ID, rsquared, nndist = nn2(eigvecs[:,sample])
+            ID_vs_fraction[fraction].append([ID,rsquared])
+            # We could stop here for fraction = 1.0, but having num_average identical samples
             # makes the analysis script a little easier to read...
-
+            
     filename = output_path+'plateauing_L_{0}_seed_{1}'.format(L, seed)+'.npy'
     np.save(filename, ID_vs_fraction)
 

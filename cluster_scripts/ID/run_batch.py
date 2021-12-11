@@ -16,7 +16,7 @@ def run(L, startseed, endseed, output_path):
             ID, rsquared, nndist = nn2(eigvecs)
             data.append({'ID':ID, 'rsquared':rsquared, 'nndist':nndist})
     
-        filename = output_path+'2nn_L_{0}_seed_{1}'.format(L, seed)+'.npy'
+        filename = output_path+'2nn_L_{0}_seed_{1}.npy'.format(L, seed)
         np.save(filename, np.array(data))
 
 if __name__ == '__main__':
