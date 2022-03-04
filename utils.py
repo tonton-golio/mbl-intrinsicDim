@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from math import factorial
 from tqdm import tqdm
-import fssa
+#import fssa
 from scipy.stats import chisquare
     
 ## Building the Hamiltonian 
