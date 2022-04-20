@@ -1,0 +1,58 @@
+#INTRO
+
+*How disordered does a potential have be for the system to retain local memory?*
+
+We propose **dimension analysis via 2NN** (a neighbour graphs algorithm) can help to answer this question. To show our method we present and interactive tool for analysizing **eigenstates of the 1D Hubbard Hamiltonian**.
+
+\mathcal{H} = t\sum_i^{L-1}(\hat{c}_{i+1}^\dagger \hat{c}_i +h.c.) 
+            + U\sum_{i}^{L-1} \hat{n}_i\hat{n}_{i+1}
+            + \sum_{i}^L h_i\hat{n}_i.
+
+#SIDEBAR
+
+Adjust parameters via sliders!
+
+#POTENTIAL
+
+Each site is associated with an energy. This energy is drawn from 
+
+ random distribution in the range [-W,W].
+
+#EIGENSTATES
+
+Do note, that the x-axis postion for the potential is not the same as that for the eigvecs. For the potential, it is the site number, whereas for the eigenstates it is the configuration index. The configurations are indexed as follows
+
+The configuration with the largest probability for the most energetic eigenstate is
+
+and is shown by the purple dots on the potential below.
+
+#2NN
+
+2 nearest neighbours (2nn) looks at the manhattan (L1) distance to nearest neighbours. Since L1 distance scales with dimensionality of the gradient -- this is really what we are measuring. To obtain $\mu$ we divide the next nearest neighbour distance, $r_2$, by the nearest neighbour distance, $r_1$. The reason we use two rather than just one, is for the algorithm to be generally applicable, i.e., $r_1$ is used to scale for local density. On the second axis, $F(\mu)$ is the emperical cumulate. An origin-bound linear fit, has a slope that estimates the intrinsic dimension of the data-sample.
+
+#CODE_uniform
+
+np.random.seed(seed)
+h = np.random.uniform(-1,1,size=L) * W
+
+#CODE_normal
+
+np.random.seed(seed)
+h = (np.random.normal(0,1,size=L)) * W
+
+#CODE_bimodal
+
+np.random.seed(seed)
+h = np.concatenate([np.random.normal(W, size=L), np.random.normal(-W, size=L)])
+np.random.shuffle(h)
+
+#CODE_trimodal
+
+np.random.seed(seed)
+h = np.concatenate([np.random.normal(W, size=L), np.random.normal(0, size=L), np.random.normal(-W, size=L)])
+np.random.shuffle(h)
+
+#CODE_sinusoidal
+
+h = np.cos(np.arange(L)*np.pi)
+
