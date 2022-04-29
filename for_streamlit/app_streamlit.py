@@ -6,6 +6,13 @@ import pandas as pd
 import seaborn as sns
 from plotting import *
 
+import sys
+import os
+
+pwd = os.getcwd() 
+a = pwd.split('/')
+path += '/'.join(a[:-1])
+
 st.set_page_config(layout='wide')
 
 text_dict = {}
