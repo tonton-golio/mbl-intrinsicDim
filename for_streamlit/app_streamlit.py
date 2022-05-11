@@ -21,7 +21,7 @@ from utils import *
 st.set_page_config(layout='wide')
 
 text_dict = {}
-with open('app_text.txt') as f:
+with open('for_streamlit/app_text.txt') as f:
     text = f.read().split('#')[1:]
 for sec in text:
     lines = sec.split('\n\n')
