@@ -1,15 +1,27 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
-from utils import *
+
 import pandas as pd
 import seaborn as sns
 from plotting import *
 
+
+import os
+import sys
+
+pwd = os.getcwd() 
+a = pwd.split('/')
+path_add = '/'.join(a[:-1])
+
+sys.path.insert(0, path_add)
+from utils import *
+
+
 st.set_page_config(layout='wide')
 
 text_dict = {}
-with open('data/app_text.txt') as f:
+with open('for_streamlit/app_text.txt') as f:
     text = f.read().split('#')[1:]
 for sec in text:
     lines = sec.split('\n\n')
