@@ -10,14 +10,21 @@ def run(L, startseed, endseed, output_path):
 
     for seed in range(startseed, endseed):
         data = []
-        for W in Ws:
-            H = constructHamiltonian(L = L, W = W, seed=seed)
-            _, eigvecs = np.linalg.eigh(H)
+        evals = []
+        for w,W in enumerate(Ws):
+            this_seed = int(L * 1e7 + w * 1e5 + seed)
+
+            H = constructHamiltonian(L = L, W = W, seed=this_seed)
+            eigvals, eigvecs = np.linalg.eigh(H)
             ID, rsquared, nndist = nn2(eigvecs)
             data.append({'ID':ID, 'rsquared':rsquared, 'nndist':nndist})
+            evals.append(eigvals)
     
         filename = output_path+'2nn_L_{0}_seed_{1}.npy'.format(L, seed)
         np.save(filename, np.array(data))
+        filename = output_path+'spectrum_L_{0}_seed_{1}.npy'.format(L, seed)
+        np.save(filename, np.array(evals))
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Run 2NN on Hubbard chain Eigenvectors")
