@@ -11,19 +11,23 @@ def run(L, startseed, endseed, output_path):
     for seed in range(startseed, endseed):
         data = []
         evals = []
+        nn_indices = []
         for w,W in enumerate(Ws):
             this_seed = int(L * 1e7 + w * 1e5 + seed)
 
             H = constructHamiltonian(L = L, W = W, seed=this_seed)
             eigvals, eigvecs = np.linalg.eigh(H)
-            ID, rsquared, nndist = nn2(eigvecs)
+            ID, rsquared, nndist, nn_indxs = nn2(eigvecs)
             data.append({'ID':ID, 'rsquared':rsquared, 'nndist':nndist})
             evals.append(eigvals)
+            nn_indices.append(nn_indxs)
     
         filename = output_path+'2nn_L_{0}_seed_{1}.npy'.format(L, seed)
         np.save(filename, np.array(data))
         filename = output_path+'spectrum_L_{0}_seed_{1}.npy'.format(L, seed)
         np.save(filename, np.array(evals))
+        filename = output_path+'nn_indices_L_{0}_seed_{1}.npy'.format(L, seed)
+        np.save(filename, np.array(nn_indices))
 
 
 if __name__ == '__main__':

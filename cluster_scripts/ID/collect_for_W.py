@@ -9,9 +9,17 @@ def collect(L, seed, output_path):
     alldata = []
     Ws = np.concatenate([np.arange(1,2.6,0.2), np.arange(2.6,4.55,0.05), np.arange(4.7,6.2,0.2)])
     for W in Ws:
-        filename = output_path+'2nn_L_%d_seed_%d_W_%.1f.npy'%(L, seed, W)
-        data = np.atleast_2d(np.load(filename, allow_pickle=True))[0][0]
-        alldata.append(data)
+        try:
+            filename = output_path+'2nn_L_%d_seed_%d_W_%.2f.npy'%(L, seed, W)
+            data = np.atleast_2d(np.load(filename, allow_pickle=True))[0][0]
+            alldata.append(data)
+        except:
+            try:
+                filename = output_path+'2nn_L_%d_seed_%d_W_%.1f.npy'%(L, seed, W)
+                data = np.atleast_2d(np.load(filename, allow_pickle=True))[0][0]
+                alldata.append(data)
+            except:
+                continue
 
     filename = output_path+'2nn_L_{0}/2nn_L_{0}_seed_{1}.npy'.format(L, seed)
     np.save(filename, np.array(alldata))

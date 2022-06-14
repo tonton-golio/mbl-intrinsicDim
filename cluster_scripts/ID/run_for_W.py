@@ -7,17 +7,22 @@ import numpy as np
 
 def run(L, seed, W, output_path):
     data = []
+    Ws = np.concatenate([np.arange(1,2.6,0.2), np.arange(2.6,4.55,0.05), np.arange(4.7,6.2,0.2)])
+    w = index(W)
+
     this_seed = int(L * 1e7 + w * 1e5 + seed)
 
-    H = constructHamiltonian(L = L, W = W, seed=seed)
+    H = constructHamiltonian(L = L, W = W, seed=this_seed)
     eigvals, eigvecs = np.linalg.eigh(H)
-    ID, rsquared, nndist = nn2(eigvecs)
+    ID, rsquared, nndist, nn_indices = nn2(eigvecs)
     data.append({'ID':ID, 'rsquared':rsquared, 'nndist':nndist})
     
     filename = output_path+'2nn_L_{0}_seed_{1}_W_{2}.npy'.format(L, seed, W)
     np.save(filename, np.array(data))
     filename = output_path+'spectrum_L_{0}_seed_{1}_W_{2}.npy'.format(L, seed,W)
     np.save(filename, np.array(eigvals))
+    filename = output_path+'nn_indices_L_{0}_seed_{1}_W_{2}.npy'.format(L, seed,W)
+    np.save(filename, np.array(nn_indices))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Run 2NN on Hubbard chain Eigenvectors")
