@@ -11,23 +11,26 @@ def run(L, startseed, endseed, output_path):
     for seed in range(startseed, endseed):
         data = []
         evals = []
-        nn_indices = []
+        nn_indices_l1 = []
+        nn_indices_linf = []
         for w,W in enumerate(Ws):
             this_seed = int(L * 1e7 + w * 1e5 + seed)
 
             H = constructHamiltonian(L = L, W = W, seed=this_seed)
             eigvals, eigvecs = np.linalg.eigh(H)
-            ID, rsquared, nndist, nn_indxs = nn2(eigvecs)
-            data.append({'ID':ID, 'rsquared':rsquared, 'nndist':nndist})
+
+            ID, rsquared, nndist, nn_indxs = nn2(eigvecs, distance_metric='L1')
+            ID_linf, rsquared_linf, nndist_linf, nn_indxs_linf = nn2(eigvecs, distance_metric='Linf')
+
+            data.append({'ID':ID, 'rsquared':rsquared, 'nndist':nndist, 'nn_indices':nn_indxs,
+			 'ID_linf':ID_linf, 'rsquared_linf':rsquared_linf, 'nndist_linf':nndist_linf,
+			 'nn_indices_linf':nn_indxs_linf})
             evals.append(eigvals)
-            nn_indices.append(nn_indxs)
     
         filename = output_path+'2nn_L_{0}_seed_{1}.npy'.format(L, seed)
         np.save(filename, np.array(data))
         filename = output_path+'spectrum_L_{0}_seed_{1}.npy'.format(L, seed)
         np.save(filename, np.array(evals))
-        filename = output_path+'nn_indices_L_{0}_seed_{1}.npy'.format(L, seed)
-        np.save(filename, np.array(nn_indices))
 
 
 if __name__ == '__main__':
