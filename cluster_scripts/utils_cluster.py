@@ -1,5 +1,6 @@
 from math import factorial
 from numpy import zeros, random, array, sort, argsort, arange, log, eye, sum, mean
+import numpy as np
 from scipy.optimize import curve_fit
 
     
@@ -141,7 +142,7 @@ def constructHamiltonian(L = 4, W = 2, U = 1.0, t = 1.0, seed=42):
 def linear_origin_bound(x, a):
     return a * x
 
-def nn2(A, plot=False):
+def nn2(A, distance_metric='L1'):
 	'''
     Find intrinsic dimension (ID) via 2-nearest-neighbours
     https://www.nature.com/articles/s41598-017-11873-y
@@ -149,23 +150,25 @@ def nn2(A, plot=False):
     _______________
     Parameters:
         eigvecs
-        plot : create a plot; boolean; dafault=False
     _______________
     Returns:
         d : Slope
-        quality: chiSquared fit-quality
-    
     '''
 	N  = len(A)
     #Make distance matrix
-	dist_M = array([[sum(abs(a-b)) if index0 < index1 else 0 for index1, b in enumerate(A)] for index0, a in enumerate(A)])
+	if distance_metric == 'L1':
+		dist_M = array([[sum(abs(a-b)) if index0 < index1 else 0 for index1, b in enumerate(A)] for index0, a in enumerate(A)])
+	else:
+		dist_M = array([[max(abs(a-b)) if index0 < index1 else 0 for index1, b in enumerate(A)] for index0, a in enumerate(A)])
 	# Add an offset to the diagonal to avoid having a nearest neighbor distance of 0
 	dist_M += dist_M.T + eye(N)*1e6
     
     # Calculate mu
-	Msorted = sort(dist_M, axis=1)
+	M_sorted_indices = np.argsort(dist_M, axis=1)
+	r1_index = M_sorted_indices[:,0]
+	Msorted = np.take_along_axis(dist_M, M_sorted_indices, axis=1)
 	r1, r2 = Msorted[:,0], Msorted[:,1]
-	mu =  r2/r1
+	mu = r2/r1
 	x = log(mu)
     
     # Permutation
@@ -173,7 +176,7 @@ def nn2(A, plot=False):
 	y = array([1-dic[i] for i in range(N)])
     
     # Drop bad values (negative y's)
-	x,y  = x[y>0], y[y>0]
+	x,y  = np.nan_to_num(x[y>0]), np.nan_to_num(y[y>0])
 	y = -1*log(y)
     
     #fit line through origin to get the dimension
@@ -184,4 +187,4 @@ def nn2(A, plot=False):
     # Goodness of fit with R^2
 	rsquared = 1 - sum((y-popt[0]*x)**2)/ sum((y-mean(y))**2)
 
-	return d, rsquared, r1
+	return d, rsquared, r1, r1_index
