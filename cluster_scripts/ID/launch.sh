@@ -28,11 +28,13 @@ do
  	qsub -l walltime=04:00:00,mem=4gb -v output_path=$savedir,L=$L,Ss=$Ss,Se=$Se -N 2NN-L-$L-S-$i controlscript_batch.pbs
 done
 
-#L=14
-#for i in `seq 0 999`
-#do
-#	qsub -l walltime=24:00:00,mem=8gb -v output_path=$savedir,L=$L,S=$i -N 2NN-L-$L-S-$i controlscript.pbs
-#done
+L=14
+for i in `seq 0 10 999`
+do
+ 	Ss=$i
+        let Se=$i+2
+ 	qsub -l walltime=24:00:00,mem=8gb -v output_path=$savedir,L=$L,Ss=$Ss,Se=$Se -N 2NN-L-$L-S-$i controlscript_batch.pbs
+done
 
 #
 #L=16
